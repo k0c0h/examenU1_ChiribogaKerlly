@@ -9,6 +9,11 @@ class AguaViewModel extends ChangeNotifier {
     double lecturaAnterior = 0,
     double lecturaActual = 0,
   }) {
+    if (lecturaActual < lecturaAnterior) {
+      throw ArgumentError(
+        'La lectura actual debe ser mayor o igual que la lectura anterior',
+      );
+    }
 
     final consumo = lecturaActual - lecturaAnterior;
     final tarifa = consumo <= 15 ? 0.40 : consumo <= 30 ? 0.60 : 0.80;

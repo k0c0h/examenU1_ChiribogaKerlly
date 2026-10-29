@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../model/agua_model.dart';
+import '../widgets/dato_resultado.dart';
 
 class ResultadoPantalla extends StatelessWidget {
   const ResultadoPantalla({super.key});
@@ -20,16 +21,25 @@ class ResultadoPantalla extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Column(
                 children: [
-                  dato('Lectura anterior', '${agua.lecturaAnterior} m³'),
-                  dato('Lectura actual', '${agua.lecturaActual} m³'),
-                  dato('Consumo realizado', '${agua.consumo} m³'),
-                  dato(
-                    'Tarifa aplicada',
-                    '\$${agua.tarifa.toStringAsFixed(2)} / m³',
+                  DatoResultado(
+                    titulo: 'Lectura anterior',
+                    valor: '${agua.lecturaAnterior} m³',
                   ),
-                  dato(
-                    'Total a pagar',
-                    '\$${agua.total.toStringAsFixed(2)}',
+                  DatoResultado(
+                    titulo: 'Lectura actual',
+                    valor: '${agua.lecturaActual} m³',
+                  ),
+                  DatoResultado(
+                    titulo: 'Consumo realizado',
+                    valor: '${agua.consumo} m³',
+                  ),
+                  DatoResultado(
+                    titulo: 'Tarifa aplicada',
+                    valor: '\$${agua.tarifa.toStringAsFixed(2)} / m³',
+                  ),
+                  DatoResultado(
+                    titulo: 'Total a pagar',
+                    valor: '\$${agua.total.toStringAsFixed(2)}',
                     destacado: true,
                   ),
                 ],
@@ -55,20 +65,4 @@ class ResultadoPantalla extends StatelessWidget {
     );
   }
 
-  static Widget dato(
-    String titulo,
-    String valor, {
-    bool destacado = false,
-  }) {
-    return ListTile(
-      title: Text(titulo),
-      trailing: Text(
-        valor,
-        style: TextStyle(
-          fontWeight: destacado ? FontWeight.bold : FontWeight.w600,
-          fontSize: destacado ? 20 : 16,
-        ),
-      ),
-    );
-  }
 }

@@ -16,6 +16,8 @@ class _AguaPantallaState extends State<AguaPantalla> {
   final formularioKey = GlobalKey<FormState>();
 
   void calcular() {
+    if (!formularioKey.currentState!.validate()) return;
+
     try {
       final resultado = context.read<AguaViewModel>().calcular(
             lecturaAnterior: double.parse(lecturaAnteriorController.text),
@@ -25,6 +27,10 @@ class _AguaPantallaState extends State<AguaPantalla> {
     } on FormatException catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error.message)),
+      );
+    } on ArgumentError catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.message ?? 'Lecturas inválidas')),
       );
     }
   }
@@ -36,13 +42,26 @@ class _AguaPantallaState extends State<AguaPantalla> {
     return null;
   }
 
+  String? validarLecturaActual(String? valor) {
+    final error = validarLectura(valor);
+    if (error != null) return error;
+
+    final lecturaAnterior = double.parse(lecturaAnteriorController.text);
+    final lecturaActual = double.parse(valor!);
+    if (lecturaActual < lecturaAnterior) {
+      return 'Debe ser mayor o igual a la lectura anterior';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Lecturas del medidor')),
+      appBar: AppBar(title: Text('Lecturas del medidor')),
       body: Form(
+        key: formularioKey,
         child: ListView(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20),
           children: [
             Text(
               'Ingresa las lecturas',
@@ -50,33 +69,33 @@ class _AguaPantallaState extends State<AguaPantalla> {
                     fontWeight: FontWeight.bold,
                   ),
             ),        
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             TextFormField(
               controller: lecturaAnteriorController,
               validator: validarLectura,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(
                 labelText: 'Lectura anterior (m³)',
                 prefixIcon: Icon(Icons.history_rounded),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             TextFormField(
               controller: lecturaActualController,
-              validator: validarLectura,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
+              validator: validarLecturaActual,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(
                 labelText: 'Lectura actual (m³)',
                 prefixIcon: Icon(Icons.speed_rounded),
               ),
             ),
-            const SizedBox(height: 28),
+            SizedBox(height: 28),
             SizedBox(
               height: 52,
               child: FilledButton.icon(
                 onPressed: calcular,
-                icon: const Icon(Icons.calculate_rounded),
-                label: const Text('Calcular valor a pagar'),
+                icon: Icon(Icons.calculate_rounded),
+                label: Text('Calcular valor a pagar'),
               ),
             ),
           ],
